@@ -31,7 +31,7 @@ To compile a specific example using the provided Makefile, run:
 ```bash
 make -f Makefile.sdk_examples EXAMPLE=hello_dialog
 make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
-make -f Makefile.sdk_examples EXAMPLE=progress_dialog``
+make -f Makefile.sdk_examples EXAMPLE=progress_dialog``` 
 
 
 
