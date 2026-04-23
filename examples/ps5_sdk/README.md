@@ -32,7 +32,8 @@ To compile a specific example using the provided Makefile, run:
 make -f Makefile.sdk_examples EXAMPLE=hello_dialog
 make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
 make -f Makefile.sdk_examples EXAMPLE=progress_dialog``` 
-
-
-
-Developed by Rufidj - Part of the PS5 Research SDK project.
+        
+---
+## Credits
+* **Developer:** Rufidj ([@Rufidj](https://github.com/Rufidj))
+* **Project:** PS5 Research SDK for FW 13.00
