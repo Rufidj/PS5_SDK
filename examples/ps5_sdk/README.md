@@ -1,4 +1,7 @@
 # PS5 SDK Examples
+# PS5 SDK Examples
+![Author](https://img.shields.io/badge/Author-Rufidj-blue?style=flat-square)
+![Firmware](https://img.shields.io/badge/PS5-13.00-black?style=flat-square)
 
 Small, standalone examples to test `src/ps5_sdk.h` functionality without dependencies from external emulators or complex codebases.
 
@@ -31,9 +34,4 @@ To compile a specific example using the provided Makefile, run:
 ```bash
 make -f Makefile.sdk_examples EXAMPLE=hello_dialog
 make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
-make -f Makefile.sdk_examples EXAMPLE=progress_dialog``` 
-        
----
-## Credits
-* **Developer:** Rufidj ([@Rufidj](https://github.com/Rufidj))
-* **Project:** PS5 Research SDK for FW 13.00
+make -f Makefile.sdk_examples EXAMPLE=progress_dialog
