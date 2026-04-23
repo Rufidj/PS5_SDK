@@ -1,5 +1,4 @@
 # PS5 SDK Examples
-# PS5 SDK Examples
 ![Author](https://img.shields.io/badge/Author-Rufidj-blue?style=flat-square)
 ![Firmware](https://img.shields.io/badge/PS5-13.00-black?style=flat-square)
 
