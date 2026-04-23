@@ -1,0 +1,36 @@
+CC      = gcc
+OBJCOPY = objcopy
+
+EXAMPLE ?= hello_dialog
+SRC      = examples/ps5_sdk/$(EXAMPLE).c
+OUTDIR   = build/examples
+TARGET   = $(OUTDIR)/$(EXAMPLE)
+OBJ      = $(TARGET).o
+
+CFLAGS  = -Os -ffreestanding -fno-stack-protector -fno-builtin \
+          -fpie -mno-red-zone -fomit-frame-pointer -fcf-protection=none \
+          -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables \
+          -Wall -Wno-unused-function -Isrc -Iexamples/ps5_sdk
+
+LDFLAGS = -T linker.ld -nostdlib -nostartfiles -static \
+          -Wl,--build-id=none -Wl,--no-dynamic-linker -Wl,-z,norelro -no-pie
+
+all: $(TARGET).bin
+
+$(OUTDIR):
+	mkdir -p $(OUTDIR)
+
+$(OBJ): $(SRC) examples/ps5_sdk/example_common.h src/core.h src/ps5_sdk.h | $(OUTDIR)
+	$(CC) $(CFLAGS) -c $(SRC) -o $@
+
+$(TARGET).elf: $(OBJ)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ)
+
+$(TARGET).bin: $(TARGET).elf
+	$(OBJCOPY) -O binary $< $@
+	@echo "Built: $@ ($$(wc -c < $@) bytes)"
+
+clean:
+	rm -f $(OUTDIR)/*.o $(OUTDIR)/*.elf $(OUTDIR)/*.bin
+
+.PHONY: all clean
