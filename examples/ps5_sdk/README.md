@@ -33,3 +33,6 @@ make -f Makefile.sdk_examples EXAMPLE=hello_dialog
 make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
 make -f Makefile.sdk_examples EXAMPLE=progress_dialog
 
+
+
+Developed by Rufidj - Part of the PS5 Research SDK project.
