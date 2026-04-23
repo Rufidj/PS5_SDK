@@ -1,59 +1,35 @@
 # PS5 SDK Examples
 
-Ejemplos pequenos para probar `src/ps5_sdk.h` sin depender del codigo del emulador NES.
+Small, standalone examples to test `src/ps5_sdk.h` functionality without dependencies from external emulators or complex codebases.
 
-## Ejemplos
+## Examples Overview
 
-- `hello_dialog`: abre un cuadro de texto simple con `Hola mundo` y espera a que el usuario pulse aceptar.
-- `formatter_dialog`: prueba `ps5_sdk_snprintf` con `%d`, `%x` y `%p` dentro de un cuadro de texto.
-- `progress_dialog`: abre una barra de progreso y actualiza texto/porcentaje.
-- `kernel_info`: llama funciones simples de libkernel y muestra `pid`, `uid`, `gid`, `cpumode` y tiempo de proceso.
-- `sysmodule_resolve`: resuelve funciones de `libSceSysmodule` y muestra sus punteros.
-- `audioout_resolve`: carga/resuelve `libSceAudioOut` sin abrir salida de audio todavia.
-- `audioout_open_probe`: inicializa AudioOut, intenta abrir un puerto con parametros conocidos y lo cierra si abre.
-- `audio_beep`: abre AudioOut, reproduce un beep corto y cierra el puerto.
-- `pad_read_dialog`: inicializa `libScePad`, lee botones durante unos segundos y muestra valores crudos.
-- `input_beep`: combina `libScePad` y `libSceAudioOut`; cada boton nuevo reproduce un tono distinto.
-- `user_service_info`: consulta `libSceUserService`, lista usuarios logueados e intenta mostrar el nombre.
-- `system_params_info`: consulta `libSceSystemService` y muestra idioma, formato de fecha/hora y zona horaria.
-- `regmgr_read_info`: lee unas pocas claves de `libSceRegMgr` en modo solo lectura.
-- `gpu_info`: consulta `libSceGnmDriver` en modo solo lectura para mostrar reloj de GPU y `userPaEnabled`.
-- `videoout_info`: carga `libSceVideoOut` y resuelve funciones basicas sin abrir ni registrar buffers.
-- `videoout_open_probe`: abre y cierra VideoOut sin registrar buffers ni hacer flips.
-- `net_resolve_info`: carga `libSceNet`/`libSceNetCtl` y resuelve funciones socket de libkernel sin abrir sockets.
-- `socket_open_probe`: abre y cierra un socket UDP sin hacer bind ni enviar trafico.
-- `net_init_probe`: inicializa `libSceNet`, prueba `sceNetSocket`, cierra y termina Net.
+* **hello_dialog**: Opens a simple text box displaying "Hello World" and waits for the user to dismiss it.
+* **formatter_dialog**: Tests `ps5_sdk_snprintf` with `%d`, `%x`, and `%p` formatters inside a system dialog.
+* **progress_dialog**: Displays a native progress bar and dynamically updates both text and percentage.
+* **kernel_info**: Calls basic `libkernel` functions to retrieve and display PID, UID, GID, CPU mode, and process uptime.
+* **sysmodule_resolve**: Resolves symbols from `libSceSysmodule` and prints their memory pointers.
+* **audioout_resolve**: Loads and resolves `libSceAudioOut` without initializing the audio output yet.
+* **audioout_open_probe**: Initializes AudioOut, attempts to open a port with known parameters, and closes it upon success.
+* **audio_beep**: Opens AudioOut, plays a short beep tone, and safely closes the port.
+* **pad_read_dialog**: Initializes `libScePad`, polls controller inputs for a few seconds, and displays raw button values.
+* **input_beep**: A hybrid test using `libScePad` and `libSceAudioOut`; each button press triggers a distinct audio tone.
+* **user_service_info**: Queries `libSceUserService` to list logged-in users and attempts to retrieve their usernames.
+* **system_params_info**: Uses `libSceSystemService` to display system language, date/time format, and timezone.
+* **regmgr_read_info**: Performs read-only queries on specific keys within `libSceRegMgr`.
+* **gpu_info**: Queries `libSceGnmDriver` in read-only mode to display GPU clock speeds and `userPaEnabled` status.
+* **videoout_info**: Loads `libSceVideoOut` and resolves basic functions without opening or registering buffers.
+* **videoout_open_probe**: Opens and closes VideoOut without buffer registration or frame flipping.
+* **net_resolve_info**: Loads `libSceNet`/`libSceNetCtl` and resolves socket functions from `libkernel` without opening active sockets.
+* **socket_open_probe**: Opens and closes a UDP socket without binding or sending traffic.
+* **net_init_probe**: Initializes `libSceNet`, tests `sceNetSocket`, then closes and terminates the network stack.
 
-## Build
+## Build Instructions
+
+To compile a specific example using the provided Makefile, run:
 
 ```bash
 make -f Makefile.sdk_examples EXAMPLE=hello_dialog
 make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
 make -f Makefile.sdk_examples EXAMPLE=progress_dialog
-```
 
-## Lanzar
-
-```bash
-./build_sdk_example.sh hello_dialog 192.168.0.147
-./build_sdk_example.sh formatter_dialog 192.168.0.147
-./build_sdk_example.sh progress_dialog 192.168.0.147
-./build_sdk_example.sh kernel_info 192.168.0.147
-./build_sdk_example.sh sysmodule_resolve 192.168.0.147
-./build_sdk_example.sh audioout_resolve 192.168.0.147
-./build_sdk_example.sh audioout_open_probe 192.168.0.147
-./build_sdk_example.sh audio_beep 192.168.0.147
-./build_sdk_example.sh pad_read_dialog 192.168.0.147
-./build_sdk_example.sh input_beep 192.168.0.147
-./build_sdk_example.sh user_service_info 192.168.0.147
-./build_sdk_example.sh system_params_info 192.168.0.147
-./build_sdk_example.sh regmgr_read_info 192.168.0.147
-./build_sdk_example.sh gpu_info 192.168.0.147
-./build_sdk_example.sh videoout_info 192.168.0.147
-./build_sdk_example.sh videoout_open_probe 192.168.0.147
-./build_sdk_example.sh net_resolve_info 192.168.0.147
-./build_sdk_example.sh socket_open_probe 192.168.0.147
-./build_sdk_example.sh net_init_probe 192.168.0.147
-```
-
-El launcher puede mostrar `FTP server not responding after 10s`; es normal en estos payloads de ejemplo porque no levantan FTP.
