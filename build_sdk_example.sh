@@ -1,16 +1,19 @@
 #!/bin/bash
 set -e
 
+# Configuration
 EXAMPLE="${1:-hello_dialog}"
-IP="${2:-192.168.0.147}"
+PS5_IP="${2:-YOUR_PS5_IP}"
 BIN="build/examples/${EXAMPLE}.bin"
 
-echo "[*] Compilando ejemplo SDK: ${EXAMPLE}"
+echo "[*] Compiling SDK Example: ${EXAMPLE}..."
 make -f Makefile.sdk_examples EXAMPLE="${EXAMPLE}" clean
 make -f Makefile.sdk_examples EXAMPLE="${EXAMPLE}"
 
-echo "[*] Inyectando ${BIN} en dump.lua..."
-python3 convert.py "${BIN}" dump.lua
+echo "[*] Injecting ${BIN} into payload.lua..."
+python3 convert.py "${BIN}" payload.lua
 
-echo "[*] Lanzando payload hacia ${IP}..."
-python3 dump_launcher.py "${IP}" --skip-upload
+echo "[*] Sending payload to PS5 at ${PS5_IP}..."
+python3 launcher.py "${PS5_IP}" --skip-upload
+
+echo "[+] Done!"
