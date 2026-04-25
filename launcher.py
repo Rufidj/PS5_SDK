@@ -1,16 +1,8 @@
 """
-PS5 Master Symbol Dumper
-Sends dump.lua to PS5, uploads ROMs via built-in C FTP server.
+Launcher...
 
-  python nes_launcher.py <PS5_IP>
-  python nes_launcher.py <PS5_IP> --roms-dir D:\\NES
-  python nes_launcher.py <PS5_IP> --skip-upload
-
-Place .nes files in a 'roms' folder next to this script
-"""
-
-import socket, os, time, argparse
-from ftplib import FTP
+  python launcher.py <PS5_IP>
+  python launcher.py <PS5_IP> --skip-upload
 
 PAYLOAD_PORT = 9026
 FTP_PORT = 1337
