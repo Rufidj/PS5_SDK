@@ -40,7 +40,7 @@ Use the provided helper script to compile and send the payload to your console i
 ./build_sdk_example.sh kernel_info YOUR_PS5_IP
 ./build_sdk_example.sh sysmodule_resolve YOUR_PS5_IP
 
-Special Thanks & Credits
+## Special Thanks & Credits
 
 This project stands on the shoulders of giants. Special thanks to:
 
@@ -50,7 +50,7 @@ This project stands on the shoulders of giants. Special thanks to:
 
 Their work has been a technical pillar and a huge inspiration for the development of this SDK.
 
-License
+## License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
 Disclaimer
