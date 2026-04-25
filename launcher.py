@@ -143,7 +143,7 @@ def main():
     p = argparse.ArgumentParser(description='PS5 Master Symbol Dumper')
     p.add_argument('ps5_ip', help='PS5 IP address')
     p.add_argument('--roms-dir', default=None)
-    p.add_argument('--launcher', default=None, help='Lua launcher (default: dump.lua)')
+    p.add_argument('--launcher', default=None, help='Lua launcher (default: payload.lua)')
     p.add_argument('--skip-upload', action='store_true')
     p.add_argument('--ext', nargs='+', default=['.nes'])
     p.add_argument('--ftp-wait', type=int, default=10,
@@ -152,7 +152,7 @@ def main():
 
     base = os.path.dirname(os.path.abspath(__file__))
     roms_dir = args.roms_dir or os.path.join(base, 'roms')
-    launcher = args.launcher or os.path.join(base, 'dump.lua')
+    launcher = args.launcher or os.path.join(base, 'payload.lua')
     extensions = {e if e.startswith('.') else '.' + e for e in args.ext}
 
     print(f"PS5 Master Symbol Dumper")
