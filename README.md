@@ -19,3 +19,7 @@ https://github.com/user-attachments/assets/b2b82ff3-529d-4d83-990e-058984e72da6
 
 ![Author](https://img.shields.io/badge/Author-Rufidj-blue?style=flat-square)
 ![Firmware](https://img.shields.io/badge/PS5-13.00-black?style=flat-square)
+
+## Acknowledgements
+
+Part of this project's content and codebase has been developed with the assistance of various AI models, including Claude Code, ChatGPT Codex, and Gemini.
