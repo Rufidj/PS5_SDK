@@ -19,7 +19,7 @@ A lightweight, standalone C SDK for PS5 firmware 13.00. Focuses on live RAM `EH_
 
 ## Build
 
-To compile the examples included in the SDK, use the following commands:
+Compila los ejemplos incluidos en el SDK con estos comandos:
 
 ```bash
 make -f Makefile.sdk_examples EXAMPLE=hello_dialog
@@ -27,20 +27,21 @@ make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
 make -f Makefile.sdk_examples EXAMPLE=progress_dialog
 make -f Makefile.sdk_examples EXAMPLE=kernel_info
 make -f Makefile.sdk_examples EXAMPLE=sysmodule_resolve
-
-# Usage: ./build_sdk_example.sh <example_name> <PS5_IP>
-
+```
+## Launch
+```
 ./build_sdk_example.sh hello_dialog YOUR_PS5_IP
 ./build_sdk_example.sh kernel_info YOUR_PS5_IP
 ./build_sdk_example.sh sysmodule_resolve YOUR_PS5_IP
+```
 
-Special Thanks & Credits
+## Special Thanks & Credits
 
 This project stands on the shoulders of giants. Special thanks to:
 
-    Gezine: For Luac0re, the essential Lua exploit environment that made this research possible.
+    Gezine: For [LuaC0re](https://github.com/Gezine/Luac0re), the essential Lua exploit environment that made this research possible.
 
-    egycnq: For EmuC0re, the NES emulator port that demonstrated the true potential of homebrew on PS5.
+    egycnq: For [EmuC0re](hhttps://github.com/egycnq/EmuC0re), the NES emulator port that demonstrated the true potential of homebrew on PS5.
 
 Their work has been a technical pillar and a huge inspiration for the development of this SDK.
 Acknowledgements
