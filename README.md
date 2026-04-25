@@ -4,11 +4,13 @@ A lightweight, standalone C SDK for PS5 firmware 13.00. Focuses on live RAM `EH_
 
 ![breakout](https://github.com/user-attachments/assets/fa37f637-d62b-415a-94d2-925a3a991d82)
 
-![demo1](https://github.com/user-attachments/assets/d0a36556-1ff1-4cdf-aa42-5b9d8fadbc89)
+https://github.com/user-attachments/assets/620e8cc1-ab46-4a55-8de9-f0328e8113b0
 
 ![square](https://github.com/user-attachments/assets/36c7b924-a969-43a9-a5fa-0c40755b5cec)
 
-![demo2](https://github.com/user-attachments/assets/b2b82ff3-529d-4d83-990e-058984e72da6)
+https://github.com/user-attachments/assets/dc456673-fcae-43e6-b2ef-631752ebc78f
+
+
 
 ## Key Features
 
