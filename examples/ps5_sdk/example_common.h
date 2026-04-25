@@ -1,7 +1,6 @@
 #ifndef PS5_SDK_EXAMPLE_COMMON_H
 #define PS5_SDK_EXAMPLE_COMMON_H
 
-#include "core.h"
 #include "ps5_sdk.h"
 
 struct ext_args {
@@ -65,15 +64,15 @@ static int ex_init(struct ps5_example *ex, u64 eboot_base, u64 dlsym_addr, struc
 }
 
 static u8 *ex_alloc_dialog(struct ps5_example *ex) {
-    u8 *buf = (u8 *)NC(ex->G, ex->mmap_fn, 0, 0x400, 3, 0x1002, (u64)-1, 0);
+    u8 *buf = (u8 *)NC(ex->G, ex->mmap_fn, 0, PS5SDK_DLG_BUF_SIZE, 3, 0x1002, (u64)-1, 0);
     if ((s64)buf == -1) return 0;
-    ex_zero(buf, 0x400);
+    ps5_sdk_dialog_zero(buf, PS5SDK_DLG_BUF_SIZE);
     return buf;
 }
 
 static void ex_free_dialog(struct ps5_example *ex, u8 *buf) {
     if (buf && ex->munmap_fn) {
-        NC(ex->G, ex->munmap_fn, (u64)buf, 0x400, 0, 0, 0, 0);
+        NC(ex->G, ex->munmap_fn, (u64)buf, PS5SDK_DLG_BUF_SIZE, 0, 0, 0, 0);
     }
 }
 
@@ -82,56 +81,20 @@ static void ex_dialog_begin(struct ps5_example *ex) {
     NC(ex->G, ex->dlg_init, 0, 0, 0, 0, 0, 0);
 }
 
-static void ex_setup_user_msg(u8 *dp, u8 *pp, char *msg, s32 user_id) {
-    u32 magic = (u32)((u64)dp + 0xC0D1A109);
-    *(u64 *)(dp + 0x00) = 0x30;
-    *(u32 *)(dp + 0x2C) = magic;
-    *(u64 *)(dp + 0x30) = 0x88;
-    *(u32 *)(dp + 0x38) = 1;
-    *(u64 *)(dp + 0x40) = (u64)pp; /* USER_MSG params live here on this target. */
-    *(u32 *)(dp + 0x58) = (u32)user_id;
-    *(u32 *)(pp + 0x00) = 0;
-    *(u64 *)(pp + 0x08) = (u64)msg;
-}
-
-static void ex_setup_progress(u8 *dp, u8 *pp, char *msg, s32 user_id) {
-    u32 magic = (u32)((u64)dp + 0xC0D1A109);
-    *(u64 *)(dp + 0x00) = 0x30;
-    *(u32 *)(dp + 0x2C) = magic;
-    *(u64 *)(dp + 0x30) = 0x88;
-    *(u32 *)(dp + 0x38) = 2;
-    *(u64 *)(dp + 0x48) = (u64)pp;
-    *(u32 *)(dp + 0x58) = (u32)user_id;
-    *(u32 *)(pp + 0x00) = 0;
-    *(u64 *)(pp + 0x08) = (u64)msg;
-}
-
 static s32 ex_open_text(struct ps5_example *ex, u8 *buf, const char *fmt, ...) {
-    u8 *dp = buf;
-    u8 *pp = buf + 0x88;
-    char *msg = (char *)(buf + 0xE0);
-
-    ex_zero(buf, 0x400);
     __builtin_va_list ap;
     __builtin_va_start(ap, fmt);
-    ps5_sdk_vsnprintf(msg, 160, fmt, ap);
+    ps5_sdk_dialog_prepare_text(buf, ex->user_id, fmt, ap);
     __builtin_va_end(ap);
-    ex_setup_user_msg(dp, pp, msg, ex->user_id);
-    return (s32)NC(ex->G, ex->dlg_open, (u64)dp, 0, 0, 0, 0, 0);
+    return (s32)NC(ex->G, ex->dlg_open, (u64)ps5_sdk_dialog_dp(buf), 0, 0, 0, 0, 0);
 }
 
 static s32 ex_open_progress(struct ps5_example *ex, u8 *buf, const char *fmt, ...) {
-    u8 *dp = buf;
-    u8 *pp = buf + 0x88;
-    char *msg = (char *)(buf + 0xE0);
-
-    ex_zero(buf, 0x400);
     __builtin_va_list ap;
     __builtin_va_start(ap, fmt);
-    ps5_sdk_vsnprintf(msg, 160, fmt, ap);
+    ps5_sdk_dialog_prepare_progress(buf, ex->user_id, fmt, ap);
     __builtin_va_end(ap);
-    ex_setup_progress(dp, pp, msg, ex->user_id);
-    return (s32)NC(ex->G, ex->dlg_open, (u64)dp, 0, 0, 0, 0, 0);
+    return (s32)NC(ex->G, ex->dlg_open, (u64)ps5_sdk_dialog_dp(buf), 0, 0, 0, 0, 0);
 }
 
 static void ex_wait_user_close(struct ps5_example *ex) {

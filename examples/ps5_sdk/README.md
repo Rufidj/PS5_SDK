@@ -17,7 +17,9 @@ Ejemplos pequenos para probar `src/ps5_sdk.h` sin depender del codigo del emulad
 - `input_beep`: combina `libScePad` y `libSceAudioOut`; cada boton nuevo reproduce un tono distinto.
 - `pad_fx_probe`: sonda ligera de `libScePad` para ver si resuelven APIs avanzadas como `scePadSetTriggerEffect`, `scePadSetLightBar` y `scePadGetControllerInformation`.
 - `pad_lightbar_probe`: intento visual y ligero de cambiar el color del lightbar y restaurarlo despues.
+- `pad_lightbar_live`: ejemplo interactivo; los botones cambian el color del lightbar del mando durante unos segundos.
 - `pad_rgb_cycle`: ciclo corto de tres colores en el lightbar y restauracion al color original.
+- `pad_party`: mezcla interactiva de pad + lightbar + beep; cada boton nuevo cambia el color y reproduce un tono.
 - `pad_trigger_probe`: primer intento conservador de `scePadSetTriggerEffect` para notar si `R2` ofrece resistencia durante un instante y luego resetear.
 - `pad_info_probe`: lee los primeros campos crudos de `scePadGetControllerInformation` para entender mejor capacidades y layout del mando.
 - `pad_trigger_matrix`: prueba varias disposiciones minimas de bytes para `scePadSetTriggerEffect` y compara retornos sin gastar mucha memoria.
@@ -30,6 +32,15 @@ Ejemplos pequenos para probar `src/ps5_sdk.h` sin depender del codigo del emulad
 - `sdk_dashboard`: panel seguro con `MsgDialog` que combina usuario, hora local, red, sistema y GPU en una sola vista.
 - `sdk_live_launcher`: mini app interactiva con mando; menu vivo en `MsgDialog` para navegar entre dashboard, pad, audio y sistema.
 - `videoout_info`: carga `libSceVideoOut` y resuelve funciones basicas sin abrir ni registrar buffers.
+- `videoout_host_state`: inspecciona el estado bruto del host (`EBOOT_VIDOUT`, `EBOOT_GS_THREAD`) y cuantas funciones base de `VideoOut` estan resueltas.
+- `videoout_gs_probe`: prueba de forma aislada si `scePthreadCancel` puede parar el thread grafico host sin tocar buffers ni flips.
+- `videoout_takeover_probe`: replica la secuencia de `main.c`/`main_nes.c`: cancelar `gs`, cerrar `emu_vid` y probar `sceVideoOutOpen` con fallback de tipos, sin registrar buffers todavia.
+- `videoout_takeover_reg_probe`: da un paso mas en la misma secuencia de takeover y prueba `AllocateDirectMemory + MapDirectMemory + RegisterBuffers`, pero todavia sin `SubmitFlip`.
+- `videoout_takeover_flip_probe`: extiende el takeover bueno hasta `SetFlipRate + SubmitFlip`, pintando un framebuffer minimo para intentar el primer render real del SDK.
+- `fb_animation`: animacion suave de un cuadrado rebotante con ciclo de color completo (hue 0→360); doble buffer real alternando indices 0/1, 360 frames a ~60 fps. Validado en hardware.
+- `fb_pad_draw`: control interactivo del framebuffer con el mando; D-pad mueve un cuadrado por la pantalla, botones de cara (CROSS/CIRCLE/TRIANGLE/SQUARE/L1/R1) cambian su color, CROSS para salir (timeout 15 s). Validado en hardware.
+- `fb_text`: animacion con HUD en pantalla usando `ps5sdk_fb_str` y `ps5sdk_fb_dec`; muestra frame counter y coordenadas X/Y actualizandose en vivo. Validado en hardware.
+- `arkanoid`: juego completo — ladrillos de 6 colores, bola con fisicas de rebote, paleta controlada con D-pad, puntuacion por fila, 3 vidas, sonidos de beep al chocar con bola/ladrillo/vida perdida; CROSS lanza/reinicia, OPTIONS sale. Requiere libScePad + libSceVideoOut + libSceAudioOut.
 - `videoout_open_probe`: abre y cierra VideoOut sin registrar buffers ni hacer flips.
 - `videoout_open_matrix`: prueba varias combinaciones de `sceVideoOutOpen` para encontrar una que abra en este contexto.
 - `hello_square`: intenta tomar `VideoOut`, registrar un framebuffer y dibujar un cuadrado simple en pantalla.
@@ -65,47 +76,58 @@ make -f Makefile.sdk_examples EXAMPLE=progress_dialog
 ## Lanzar
 
 ```bash
-./build_sdk_example.sh hello_dialog 192.168.0.147
-./build_sdk_example.sh formatter_dialog 192.168.0.147
-./build_sdk_example.sh progress_dialog 192.168.0.147
-./build_sdk_example.sh kernel_info 192.168.0.147
-./build_sdk_example.sh sysmodule_resolve 192.168.0.147
-./build_sdk_example.sh sysmodule_batch_info 192.168.0.147
-./build_sdk_example.sh audioout_resolve 192.168.0.147
-./build_sdk_example.sh audioout_open_probe 192.168.0.147
-./build_sdk_example.sh audio_beep 192.168.0.147
-./build_sdk_example.sh pad_read_dialog 192.168.0.147
-./build_sdk_example.sh input_beep 192.168.0.147
-./build_sdk_example.sh pad_fx_probe 192.168.0.147
-./build_sdk_example.sh pad_lightbar_probe 192.168.0.147
-./build_sdk_example.sh pad_rgb_cycle 192.168.0.147
-./build_sdk_example.sh pad_trigger_probe 192.168.0.147
-./build_sdk_example.sh pad_info_probe 192.168.0.147
-./build_sdk_example.sh pad_trigger_matrix 192.168.0.147
-./build_sdk_example.sh pad_trigger_tune_probe 192.168.0.147
-./build_sdk_example.sh pad_trigger_ext_probe 192.168.0.147
-./build_sdk_example.sh user_service_info 192.168.0.147
-./build_sdk_example.sh system_params_info 192.168.0.147
-./build_sdk_example.sh regmgr_read_info 192.168.0.147
-./build_sdk_example.sh gpu_info 192.168.0.147
-./build_sdk_example.sh sdk_dashboard 192.168.0.147
-./build_sdk_example.sh videoout_info 192.168.0.147
-./build_sdk_example.sh videoout_open_probe 192.168.0.147
-./build_sdk_example.sh videoout_open_matrix 192.168.0.147
-./build_sdk_example.sh hello_square 192.168.0.147
-./build_sdk_example.sh hello_square_debug 192.168.0.147
-./build_sdk_example.sh net_resolve_info 192.168.0.147
-./build_sdk_example.sh socket_open_probe 192.168.0.147
-./build_sdk_example.sh net_init_probe 192.168.0.147
-./build_sdk_example.sh netctl_state_info 192.168.0.147
-./build_sdk_example.sh rtc_resolve_info 192.168.0.147
-./build_sdk_example.sh rtc_tick_info 192.168.0.147
-./build_sdk_example.sh rtc_clock_local_info 192.168.0.147
-./build_sdk_example.sh mount_points_info 192.168.0.147
-./build_sdk_example.sh mount_syscalls_info 192.168.0.147
-./build_sdk_example.sh mount_probe_info 192.168.0.147
-./build_sdk_example.sh fsstat_probe 192.168.0.147
-./build_sdk_example.sh statfs_probe 192.168.0.147
+./build_sdk_example.sh hello_dialog <IP_DE_PS5>
+./build_sdk_example.sh formatter_dialog <IP_DE_PS5>
+./build_sdk_example.sh progress_dialog <IP_DE_PS5>
+./build_sdk_example.sh kernel_info <IP_DE_PS5>
+./build_sdk_example.sh sysmodule_resolve <IP_DE_PS5>
+./build_sdk_example.sh sysmodule_batch_info <IP_DE_PS5>
+./build_sdk_example.sh audioout_resolve <IP_DE_PS5>
+./build_sdk_example.sh audioout_open_probe <IP_DE_PS5>
+./build_sdk_example.sh audio_beep <IP_DE_PS5>
+./build_sdk_example.sh pad_read_dialog <IP_DE_PS5>
+./build_sdk_example.sh input_beep <IP_DE_PS5>
+./build_sdk_example.sh pad_fx_probe <IP_DE_PS5>
+./build_sdk_example.sh pad_lightbar_probe <IP_DE_PS5>
+./build_sdk_example.sh pad_lightbar_live <IP_DE_PS5>
+./build_sdk_example.sh pad_rgb_cycle <IP_DE_PS5>
+./build_sdk_example.sh pad_party <IP_DE_PS5>
+./build_sdk_example.sh pad_trigger_probe <IP_DE_PS5>
+./build_sdk_example.sh pad_info_probe <IP_DE_PS5>
+./build_sdk_example.sh pad_trigger_matrix <IP_DE_PS5>
+./build_sdk_example.sh pad_trigger_tune_probe <IP_DE_PS5>
+./build_sdk_example.sh pad_trigger_ext_probe <IP_DE_PS5>
+./build_sdk_example.sh user_service_info <IP_DE_PS5>
+./build_sdk_example.sh system_params_info <IP_DE_PS5>
+./build_sdk_example.sh regmgr_read_info <IP_DE_PS5>
+./build_sdk_example.sh gpu_info <IP_DE_PS5>
+./build_sdk_example.sh sdk_dashboard <IP_DE_PS5>
+./build_sdk_example.sh videoout_host_state <IP_DE_PS5>
+./build_sdk_example.sh videoout_gs_probe <IP_DE_PS5>
+./build_sdk_example.sh videoout_takeover_probe <IP_DE_PS5>
+./build_sdk_example.sh videoout_takeover_reg_probe <IP_DE_PS5>
+./build_sdk_example.sh videoout_takeover_flip_probe <IP_DE_PS5>
+./build_sdk_example.sh fb_animation <IP_DE_PS5>
+./build_sdk_example.sh fb_pad_draw <IP_DE_PS5>
+./build_sdk_example.sh fb_text <IP_DE_PS5>
+./build_sdk_example.sh arkanoid <IP_DE_PS5>
+./build_sdk_example.sh videoout_info <IP_DE_PS5>
+./build_sdk_example.sh videoout_open_probe <IP_DE_PS5>
+./build_sdk_example.sh videoout_open_matrix <IP_DE_PS5>
+./build_sdk_example.sh hello_square <IP_DE_PS5>
+./build_sdk_example.sh hello_square_debug <IP_DE_PS5>
+./build_sdk_example.sh net_resolve_info <IP_DE_PS5>
+./build_sdk_example.sh socket_open_probe <IP_DE_PS5>
+./build_sdk_example.sh net_init_probe <IP_DE_PS5>
+./build_sdk_example.sh netctl_state_info <IP_DE_PS5>
+./build_sdk_example.sh rtc_resolve_info <IP_DE_PS5>
+./build_sdk_example.sh rtc_tick_info <IP_DE_PS5>
+./build_sdk_example.sh rtc_clock_local_info <IP_DE_PS5>
+./build_sdk_example.sh mount_points_info <IP_DE_PS5>
+./build_sdk_example.sh mount_syscalls_info <IP_DE_PS5>
+./build_sdk_example.sh mount_probe_info <IP_DE_PS5>
+./build_sdk_example.sh fsstat_probe <IP_DE_PS5>
+./build_sdk_example.sh statfs_probe <IP_DE_PS5>
 ```
 
 El launcher puede mostrar `FTP server not responding after 10s`; es normal en estos payloads de ejemplo porque no levantan FTP.

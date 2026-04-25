@@ -12,7 +12,7 @@ void _start(u64 eboot_base, u64 dlsym_addr, struct ext_args *ext) {
         return;
     }
 
-    s32 audio_mod = (s32)NC(ex.G, ex.load_mod, (u64)"libSceAudioOut.sprx", 0, 0, 0, 0, 0);
+    s32 audio_mod = ps5_sdk_load_sprx(ex.G, ex.load_mod, "libSceAudioOut.sprx");
     void *init_fn = SYM(ex.G, ex.D, AUDIOOUT_HANDLE, AUDIOOUT_sceAudioOutInit);
     void *open_fn = SYM(ex.G, ex.D, AUDIOOUT_HANDLE, AUDIOOUT_sceAudioOutOpen);
     void *output_fn = SYM(ex.G, ex.D, AUDIOOUT_HANDLE, AUDIOOUT_sceAudioOutOutput);

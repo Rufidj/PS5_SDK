@@ -16,8 +16,8 @@ void _start(u64 eboot_base, u64 dlsym_addr, struct ext_args *ext) {
     void *get_clock = SYM(ex.G, ex.D, GNMDRIVER_HANDLE, "sceGnmGetGpuCoreClockFrequency");
     void *is_pa_enabled = SYM(ex.G, ex.D, GNMDRIVER_HANDLE, "sceGnmIsUserPaEnabled");
 
-    u64 clock_hz = get_clock ? (u64)NC(ex.G, get_clock, 0, 0, 0, 0, 0, 0) : 0;
-    s32 pa_enabled = is_pa_enabled ? (s32)NC(ex.G, is_pa_enabled, 0, 0, 0, 0, 0, 0) : -1;
+    u64 clock_hz = ps5_sdk_gpu_get_core_clock_hz(ex.G, get_clock);
+    s32 pa_enabled = ps5_sdk_gpu_is_user_pa_enabled(ex.G, is_pa_enabled);
 
     ext->dbg[0] = clock_hz;
     ext->dbg[1] = (u64)(s64)pa_enabled;

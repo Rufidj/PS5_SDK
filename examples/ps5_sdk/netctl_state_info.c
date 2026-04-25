@@ -1,13 +1,5 @@
 #include "example_common.h"
 
-static const char *net_state_name(s32 st) {
-    if (st == 0) return "DISCONNECTED";
-    if (st == 1) return "CONNECTING";
-    if (st == 2) return "IPOBTAINING";
-    if (st == 3) return "IPOBTAINED";
-    return "UNKNOWN";
-}
-
 __attribute__((section(".text._start")))
 void _start(u64 eboot_base, u64 dlsym_addr, struct ext_args *ext) {
     if (!ext) return;
@@ -24,7 +16,7 @@ void _start(u64 eboot_base, u64 dlsym_addr, struct ext_args *ext) {
     void *get_state_fn = SYM(ex.G, ex.D, NETCTL_HANDLE, "sceNetCtlGetState");
 
     s32 state = -1;
-    s32 state_ret = get_state_fn ? (s32)NC(ex.G, get_state_fn, (u64)&state, 0, 0, 0, 0, 0) : -1;
+    s32 state_ret = ps5_sdk_netctl_get_state(ex.G, get_state_fn, &state);
 
     ext->dbg[0] = (u64)(s64)netctl_mod;
     ext->dbg[1] = (u64)(s64)state_ret;
@@ -47,7 +39,7 @@ void _start(u64 eboot_base, u64 dlsym_addr, struct ext_args *ext) {
             (u32)netctl_mod,
             (u32)state_ret,
             (int)state,
-            net_state_name(state)
+            ps5_sdk_netctl_state_name(state)
         );
     } else {
         ret = ex_open_text(
