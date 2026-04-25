@@ -1,6 +1,10 @@
 # PS5_SDK
 A lightweight, standalone C SDK for PS5 firmware 13.00. Focuses on live RAM EH_offset alignment, module handles, and direct system interaction without standard libc dependencies.
 
+ ![Author](https://img.shields.io/badge/Author-Rufidj-blue?style=flat-square)
+
+![Firmware](https://img.shields.io/badge/PS5-13.00-black?style=flat-square) 
+
 <img width="1920" height="1080" alt="breakout" src="https://github.com/user-attachments/assets/fa37f637-d62b-415a-94d2-925a3a991d82" />
 
 https://github.com/user-attachments/assets/d0a36556-1ff1-4cdf-aa42-5b9d8fadbc89
@@ -36,6 +40,16 @@ Use the provided helper script to compile and send the payload to your console i
 ./build_sdk_example.sh kernel_info YOUR_PS5_IP
 ./build_sdk_example.sh sysmodule_resolve YOUR_PS5_IP
 
+Special Thanks & Credits
+
+This project stands on the shoulders of giants. Special thanks to:
+
+    Gezine: For Luac0re, the essential Lua exploit environment that made this research possible.
+
+    egycnq: For EmuC0re, the NES emulator port that demonstrated the true potential of homebrew on PS5.
+
+Their work has been a technical pillar and a huge inspiration for the development of this SDK.
+
 License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
@@ -46,6 +60,3 @@ Acknowledgements
 
 Part of this project's content and codebase has been developed with the assistance of various AI models, including Claude Code, ChatGPT Codex, and Gemini
 
- ![Author](https://img.shields.io/badge/Author-Rufidj-blue?style=flat-square)
-
-![Firmware](https://img.shields.io/badge/PS5-13.00-black?style=flat-square) 
