@@ -1,62 +1,67 @@
 # PS5 SDK Examples
 
-Ejemplos pequenos para probar `src/ps5_sdk.h` sin depender del codigo del emulador NES.
+Small examples to test `src/ps5_sdk.h` without relying on the NES emulator code.
 
-## Ejemplos
+## Examples
 
-- `hello_dialog`: abre un cuadro de texto simple con `Hola mundo` y espera a que el usuario pulse aceptar.
-- `formatter_dialog`: prueba `ps5_sdk_snprintf` con `%d`, `%x` y `%p` dentro de un cuadro de texto.
-- `progress_dialog`: abre una barra de progreso y actualiza texto/porcentaje.
-- `kernel_info`: llama funciones simples de libkernel y muestra `pid`, `uid`, `gid`, `cpumode` y tiempo de proceso.
-- `sysmodule_resolve`: resuelve funciones de `libSceSysmodule` y muestra sus punteros.
-- `sysmodule_batch_info`: carga varios modulos base de una vez y muestra sus handles/retornos con un coste de memoria muy bajo.
-- `audioout_resolve`: carga/resuelve `libSceAudioOut` sin abrir salida de audio todavia.
-- `audioout_open_probe`: inicializa AudioOut, intenta abrir un puerto con parametros conocidos y lo cierra si abre.
-- `audio_beep`: abre AudioOut, reproduce un beep corto y cierra el puerto.
-- `pad_read_dialog`: inicializa `libScePad`, lee botones durante unos segundos y muestra valores crudos.
-- `input_beep`: combina `libScePad` y `libSceAudioOut`; cada boton nuevo reproduce un tono distinto.
-- `pad_fx_probe`: sonda ligera de `libScePad` para ver si resuelven APIs avanzadas como `scePadSetTriggerEffect`, `scePadSetLightBar` y `scePadGetControllerInformation`.
-- `pad_lightbar_probe`: intento visual y ligero de cambiar el color del lightbar y restaurarlo despues.
-- `pad_lightbar_live`: ejemplo interactivo; los botones cambian el color del lightbar del mando durante unos segundos.
-- `pad_rgb_cycle`: ciclo corto de tres colores en el lightbar y restauracion al color original.
-- `pad_party`: mezcla interactiva de pad + lightbar + beep; cada boton nuevo cambia el color y reproduce un tono.
-- `pad_trigger_probe`: primer intento conservador de `scePadSetTriggerEffect` para notar si `R2` ofrece resistencia durante un instante y luego resetear.
-- `pad_info_probe`: lee los primeros campos crudos de `scePadGetControllerInformation` para entender mejor capacidades y layout del mando.
-- `pad_trigger_matrix`: prueba varias disposiciones minimas de bytes para `scePadSetTriggerEffect` y compara retornos sin gastar mucha memoria.
-- `pad_trigger_tune_probe`: afina solo el layout valido en offset `0` con varias intensidades/modos para intentar notar efecto real y encontrar un reset aceptado.
-- `pad_trigger_ext_probe`: compara `scePadSetTriggerEffect` usando `scePadGetHandle`, `scePadOpenExt` y `scePadOpenExt2` para ver si la ruta avanzada necesita otro handle.
-- `user_service_info`: consulta `libSceUserService`, lista usuarios logueados e intenta mostrar el nombre.
-- `system_params_info`: consulta `libSceSystemService` y muestra idioma, formato de fecha/hora y zona horaria.
-- `regmgr_read_info`: lee unas pocas claves de `libSceRegMgr` en modo solo lectura.
-- `gpu_info`: consulta `libSceGnmDriver` en modo solo lectura para mostrar reloj de GPU y `userPaEnabled`.
-- `sdk_dashboard`: panel seguro con `MsgDialog` que combina usuario, hora local, red, sistema y GPU en una sola vista.
-- `sdk_live_launcher`: mini app interactiva con mando; menu vivo en `MsgDialog` para navegar entre dashboard, pad, audio y sistema.
-- `videoout_info`: carga `libSceVideoOut` y resuelve funciones basicas sin abrir ni registrar buffers.
-- `videoout_host_state`: inspecciona el estado bruto del host (`EBOOT_VIDOUT`, `EBOOT_GS_THREAD`) y cuantas funciones base de `VideoOut` estan resueltas.
-- `videoout_gs_probe`: prueba de forma aislada si `scePthreadCancel` puede parar el thread grafico host sin tocar buffers ni flips.
-- `videoout_takeover_probe`: replica la secuencia de `main.c`/`main_nes.c`: cancelar `gs`, cerrar `emu_vid` y probar `sceVideoOutOpen` con fallback de tipos, sin registrar buffers todavia.
-- `videoout_takeover_reg_probe`: da un paso mas en la misma secuencia de takeover y prueba `AllocateDirectMemory + MapDirectMemory + RegisterBuffers`, pero todavia sin `SubmitFlip`.
-- `videoout_takeover_flip_probe`: extiende el takeover bueno hasta `SetFlipRate + SubmitFlip`, pintando un framebuffer minimo para intentar el primer render real del SDK.
-- `fb_animation`: animacion suave de un cuadrado rebotante con ciclo de color completo (hue 0→360); doble buffer real alternando indices 0/1, 360 frames a ~60 fps. Validado en hardware.
-- `fb_pad_draw`: control interactivo del framebuffer con el mando; D-pad mueve un cuadrado por la pantalla, botones de cara (CROSS/CIRCLE/TRIANGLE/SQUARE/L1/R1) cambian su color, CROSS para salir (timeout 15 s). Validado en hardware.
-- `fb_text`: animacion con HUD en pantalla usando `ps5sdk_fb_str` y `ps5sdk_fb_dec`; muestra frame counter y coordenadas X/Y actualizandose en vivo. Validado en hardware.
-- `arkanoid`: juego completo — ladrillos de 6 colores, bola con fisicas de rebote, paleta controlada con D-pad, puntuacion por fila, 3 vidas, sonidos de beep al chocar con bola/ladrillo/vida perdida; CROSS lanza/reinicia, OPTIONS sale. Requiere libScePad + libSceVideoOut + libSceAudioOut.
-- `videoout_open_probe`: abre y cierra VideoOut sin registrar buffers ni hacer flips.
-- `videoout_open_matrix`: prueba varias combinaciones de `sceVideoOutOpen` para encontrar una que abra en este contexto.
-- `hello_square`: intenta tomar `VideoOut`, registrar un framebuffer y dibujar un cuadrado simple en pantalla.
-- `hello_square_debug`: recorre el mismo camino grafico pero vuelve con un dialogo de codigos de retorno para depurar `VideoOut`.
-- `net_resolve_info`: carga `libSceNet`/`libSceNetCtl` y resuelve funciones socket de libkernel sin abrir sockets.
-- `socket_open_probe`: abre y cierra un socket UDP sin hacer bind ni enviar trafico.
-- `net_init_probe`: inicializa `libSceNet`, prueba `sceNetSocket`, cierra y termina Net.
-- `netctl_state_info`: consulta `libSceNetCtl` para leer el estado actual de red.
-- `rtc_resolve_info`: carga `libSceRtc` y prueba a resolver funciones tipicas de reloj/fecha.
-- `rtc_tick_info`: llama a `sceRtcGetCurrentTick` y muestra el tick actual.
-- `rtc_clock_local_info`: llama a `sceRtcGetCurrentClockLocalTime` e intenta mostrar fecha/hora local.
-- `mount_points_info`: prueba en modo solo lectura varios puntos de montaje comunes y muestra si se pueden abrir/listar.
-- `mount_syscalls_info`: resuelve `mount` y `unmount` de `libkernel` sin intentar usarlos.
-- `mount_probe_info`: resuelve helpers de montaje/FS (`mount`, `unmount`, `nmount`, `statfs`, `getfsstat`) sin invocarlos.
-- `fsstat_probe`: llama a `getfsstat(NULL, 0, 0)` para pedir el numero de filesystems visibles sin montar nada.
-- `statfs_probe`: prueba `statfs(path, buf)` sobre varias rutas conocidas usando dialogos simples de una en una.
+- `hello_dialog`: opens a simple text dialog with `Hello world` and waits for the user to press accept.
+- `formatter_dialog`: tests `ps5_sdk_snprintf` with `%d`, `%x`, and `%p` inside a text dialog.
+- `progress_dialog`: opens a progress bar and updates text/percentage.
+- `kernel_info`: calls simple libkernel functions and shows `pid`, `uid`, `gid`, `cpumode`, and process time.
+- `sysmodule_resolve`: resolves functions from `libSceSysmodule` and displays their pointers.
+- `sysmodule_batch_info`: loads several base modules at once and shows their handles/returns with very low memory cost.
+- `audioout_resolve`: loads/resolves `libSceAudioOut` without opening audio output yet.
+- `audioout_open_probe`: initializes AudioOut, attempts to open a port with known parameters, and closes it if it opens.
+- `audio_beep`: opens AudioOut, plays a short beep, and closes the port.
+- `pad_read_dialog`: initializes `libScePad`, reads buttons for a few seconds, and displays raw values.
+- `input_beep`: combines `libScePad` and `libSceAudioOut`; each new button plays a different tone.
+- `pad_fx_probe`: lightweight `libScePad` probe to see if advanced APIs like `scePadSetTriggerEffect`, `scePadSetLightBar`, and `scePadGetControllerInformation` resolve.
+- `pad_lightbar_probe`: lightweight visual attempt to change the lightbar color and restore it afterwards.
+- `pad_lightbar_live`: interactive example; face buttons change the controller's lightbar color for a few seconds.
+- `pad_rgb_cycle`: short cycle of three colors on the lightbar and restoration to the original color.
+- `pad_party`: interactive mix of pad + lightbar + beep; each new button press changes the color and plays a tone.
+- `pad_trigger_probe`: first conservative attempt at `scePadSetTriggerEffect` to notice if `R2` offers resistance for an instant and then reset.
+- `pad_info_probe`: reads the first raw fields of `scePadGetControllerInformation` to better understand controller capabilities and layout.
+- `pad_trigger_matrix`: tests various minimal byte layouts for `scePadSetTriggerEffect` and compares returns without spending much memory.
+- `pad_trigger_tune_probe`: fine-tunes only the valid layout at offset `0` with various intensities/modes to try to notice a real effect and find an accepted reset.
+- `pad_trigger_ext_probe`: compares `scePadSetTriggerEffect` using `scePadGetHandle`, `scePadOpenExt`, and `scePadOpenExt2` to see if the advanced route requires another handle.
+- `user_service_info`: queries `libSceUserService`, lists logged-in users, and attempts to display the name.
+- `system_params_info`: queries `libSceSystemService` and displays language, date/time format, and time zone.
+- `regmgr_read_info`: reads a few keys from `libSceRegMgr` in read-only mode.
+- `gpu_info`: queries `libSceGnmDriver` in read-only mode to show GPU clock and `userPaEnabled`.
+- `sdk_dashboard`: safe dashboard with `MsgDialog` combining user, local time, network, system, and GPU in a single view.
+- `sdk_live_launcher`: interactive mini app with controller; live menu in `MsgDialog` to navigate between dashboard, pad, audio, and system.
+- `videoout_info`: loads `libSceVideoOut` and resolves basic functions without opening or registering buffers.
+- `videoout_host_state`: inspects raw host state (`EBOOT_VIDOUT`, `EBOOT_GS_THREAD`) and how many base `VideoOut` functions are resolved.
+- `videoout_gs_probe`: tests in isolation if `scePthreadCancel` can stop the host graphics thread without touching buffers or flips.
+- `videoout_takeover_probe`: replicates the `main.c`/`main_nes.c` sequence: cancel `gs`, close `emu_vid`, and test `sceVideoOutOpen` with type fallbacks, without registering buffers yet.
+- `videoout_takeover_reg_probe`: takes takeover sequence one step further testing `AllocateDirectMemory + MapDirectMemory + RegisterBuffers`, but without `SubmitFlip` yet.
+- `videoout_takeover_flip_probe`: extends the successful takeover to `SetFlipRate + SubmitFlip`, drawing a minimal framebuffer to attempt the first real SDK render.
+- `fb_animation`: smooth bouncing square animation with full color cycle (hue 0→360); true double buffering alternating indices 0/1, 360 frames at ~60 fps. Validated on hardware.
+- `fb_pad_draw`: interactive framebuffer control with the controller; D-pad moves a square, face buttons (CROSS/CIRCLE/TRIANGLE/SQUARE/L1/R1) change its color, CROSS to exit (timeout 15s). Validated on hardware.
+- `fb_text`: on-screen HUD animation using `ps5sdk_fb_str` and `ps5sdk_fb_dec`; displays frame counter and updating X/Y coordinates live. Validated on hardware.
+- `fb_explorer`: interactive visual file explorer using the GPU framebuffer; navigate directories, identify folders/files, and verify read access safely. Requires libScePad + libSceVideoOut.
+- `fb_3d_cube`: realtime software 3D renderer displaying a rotating wireframe cube using Bresenham lines, integer-math 3D projection, and sin/cos look-up tables.
+- `fb_synthwave`: realtime 3D software rendering of an Outrun/Synthwave aesthetic moving grid with a glowing retro sun, mountains, and neon color gradients.
+- `arkanoid`: full game — 6-color bricks, ball with bounce physics, D-pad controlled paddle, row-based scoring, 3 lives, beep sounds on collision with ball/brick/life lost; CROSS launches/restarts, OPTIONS exits. Requires libScePad + libSceVideoOut + libSceAudioOut.
+- `fb_snake`: full snake game — eat apples to grow, D-pad to move, walls and self-collision kills, score tracking, dynamic speed scaling, beep sounds; CROSS launches/restarts, OPTIONS exits. Requires libScePad + libSceVideoOut + libSceAudioOut.
+- `videoout_open_probe`: opens and closes VideoOut without registering buffers or making flips.
+- `videoout_open_matrix`: tests various `sceVideoOutOpen` combinations to find one that opens in this context.
+- `hello_square`: attempts to take `VideoOut`, register a framebuffer, and draw a simple square on screen.
+- `hello_square_debug`: walks the same graphic path but returns with a return code dialog to debug `VideoOut`.
+- `net_resolve_info`: loads `libSceNet`/`libSceNetCtl` and resolves libkernel socket functions without opening sockets.
+- `socket_open_probe`: opens and closes a UDP socket without binding or sending traffic.
+- `net_init_probe`: initializes `libSceNet`, tests `sceNetSocket`, closes, and terminates Net.
+- `netctl_state_info`: queries `libSceNetCtl` to read the current network state.
+- `rtc_resolve_info`: loads `libSceRtc` and tests resolving typical clock/date functions.
+- `rtc_tick_info`: calls `sceRtcGetCurrentTick` and displays the current tick.
+- `rtc_clock_local_info`: calls `sceRtcGetCurrentClockLocalTime` and attempts to show local date/time.
+- `mount_points_info`: tests several common mount points in read-only mode to show if they can be opened/listed.
+- `mount_syscalls_info`: resolves `mount` and `unmount` from `libkernel` without attempting to use them.
+- `mount_probe_info`: resolves mount/FS helpers (`mount`, `unmount`, `nmount`, `statfs`, `getfsstat`) without invoking them.
+- `fsstat_probe`: calls `getfsstat(NULL, 0, 0)` to request the number of visible filesystems without mounting anything.
+- `statfs_probe`: tests `statfs(path, buf)` on several known paths using simple dialogs one by one.
+- `fs_write_test`: tests `sceKernelOpen`, `sceKernelWrite`, and `sceKernelRead` by attempting to write and read a string to a file in `/data/`.
 
 ## Build
 
@@ -64,70 +69,80 @@ Ejemplos pequenos para probar `src/ps5_sdk.h` sin depender del codigo del emulad
 make -f Makefile.sdk_examples EXAMPLE=hello_dialog
 make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
 make -f Makefile.sdk_examples EXAMPLE=progress_dialog
+make -f Makefile.sdk_examples EXAMPLE=fb_snake
+make -f Makefile.sdk_examples EXAMPLE=fs_write_test
+make -f Makefile.sdk_examples EXAMPLE=fb_explorer
+make -f Makefile.sdk_examples EXAMPLE=fb_3d_cube
+make -f Makefile.sdk_examples EXAMPLE=fb_synthwave
 ```
 
-## Estado Pad Avanzado
+## Advanced Pad State
 
-- `scePadSetLightBar`: validado en hardware real. `set=0` y `reset=0`; el color del mando cambia y vuelve correctamente.
-- `scePadSetTriggerEffect`: la ruta buena usa `scePadGetHandle`, no `scePadOpenExt/OpenExt2`.
-- `scePadSetTriggerEffect`: varias estructuras minimas ya devuelven `0`, asi que la API entra bien.
-- `scePadSetTriggerEffect`: todavia no hemos encontrado una combinacion que produzca un efecto perceptible en `R2`, asi que el contenido exacto de la estructura sigue en fase de afinado.
+- `scePadSetLightBar`: validated on real hardware. `set=0` and `reset=0`; controller color changes and restores correctly.
+- `scePadSetTriggerEffect`: the correct path uses `scePadGetHandle`, not `scePadOpenExt/OpenExt2`.
+- `scePadSetTriggerEffect`: various minimal structures already return `0`, so the API is accessible.
+- `scePadSetTriggerEffect`: we have not yet found a combination that produces a noticeable effect on `R2`, so the exact structure content is still being fine-tuned.
 
-## Lanzar
+## Run
 
 ```bash
-./build_sdk_example.sh hello_dialog <IP_DE_PS5>
-./build_sdk_example.sh formatter_dialog <IP_DE_PS5>
-./build_sdk_example.sh progress_dialog <IP_DE_PS5>
-./build_sdk_example.sh kernel_info <IP_DE_PS5>
-./build_sdk_example.sh sysmodule_resolve <IP_DE_PS5>
-./build_sdk_example.sh sysmodule_batch_info <IP_DE_PS5>
-./build_sdk_example.sh audioout_resolve <IP_DE_PS5>
-./build_sdk_example.sh audioout_open_probe <IP_DE_PS5>
-./build_sdk_example.sh audio_beep <IP_DE_PS5>
-./build_sdk_example.sh pad_read_dialog <IP_DE_PS5>
-./build_sdk_example.sh input_beep <IP_DE_PS5>
-./build_sdk_example.sh pad_fx_probe <IP_DE_PS5>
-./build_sdk_example.sh pad_lightbar_probe <IP_DE_PS5>
-./build_sdk_example.sh pad_lightbar_live <IP_DE_PS5>
-./build_sdk_example.sh pad_rgb_cycle <IP_DE_PS5>
-./build_sdk_example.sh pad_party <IP_DE_PS5>
-./build_sdk_example.sh pad_trigger_probe <IP_DE_PS5>
-./build_sdk_example.sh pad_info_probe <IP_DE_PS5>
-./build_sdk_example.sh pad_trigger_matrix <IP_DE_PS5>
-./build_sdk_example.sh pad_trigger_tune_probe <IP_DE_PS5>
-./build_sdk_example.sh pad_trigger_ext_probe <IP_DE_PS5>
-./build_sdk_example.sh user_service_info <IP_DE_PS5>
-./build_sdk_example.sh system_params_info <IP_DE_PS5>
-./build_sdk_example.sh regmgr_read_info <IP_DE_PS5>
-./build_sdk_example.sh gpu_info <IP_DE_PS5>
-./build_sdk_example.sh sdk_dashboard <IP_DE_PS5>
-./build_sdk_example.sh videoout_host_state <IP_DE_PS5>
-./build_sdk_example.sh videoout_gs_probe <IP_DE_PS5>
-./build_sdk_example.sh videoout_takeover_probe <IP_DE_PS5>
-./build_sdk_example.sh videoout_takeover_reg_probe <IP_DE_PS5>
-./build_sdk_example.sh videoout_takeover_flip_probe <IP_DE_PS5>
-./build_sdk_example.sh fb_animation <IP_DE_PS5>
-./build_sdk_example.sh fb_pad_draw <IP_DE_PS5>
-./build_sdk_example.sh fb_text <IP_DE_PS5>
-./build_sdk_example.sh arkanoid <IP_DE_PS5>
-./build_sdk_example.sh videoout_info <IP_DE_PS5>
-./build_sdk_example.sh videoout_open_probe <IP_DE_PS5>
-./build_sdk_example.sh videoout_open_matrix <IP_DE_PS5>
-./build_sdk_example.sh hello_square <IP_DE_PS5>
-./build_sdk_example.sh hello_square_debug <IP_DE_PS5>
-./build_sdk_example.sh net_resolve_info <IP_DE_PS5>
-./build_sdk_example.sh socket_open_probe <IP_DE_PS5>
-./build_sdk_example.sh net_init_probe <IP_DE_PS5>
-./build_sdk_example.sh netctl_state_info <IP_DE_PS5>
-./build_sdk_example.sh rtc_resolve_info <IP_DE_PS5>
-./build_sdk_example.sh rtc_tick_info <IP_DE_PS5>
-./build_sdk_example.sh rtc_clock_local_info <IP_DE_PS5>
-./build_sdk_example.sh mount_points_info <IP_DE_PS5>
-./build_sdk_example.sh mount_syscalls_info <IP_DE_PS5>
-./build_sdk_example.sh mount_probe_info <IP_DE_PS5>
-./build_sdk_example.sh fsstat_probe <IP_DE_PS5>
-./build_sdk_example.sh statfs_probe <IP_DE_PS5>
+./build_sdk_example.sh hello_dialog <YOUR_PS5_IP>
+./build_sdk_example.sh formatter_dialog <YOUR_PS5_IP>
+./build_sdk_example.sh progress_dialog <YOUR_PS5_IP>
+./build_sdk_example.sh kernel_info <YOUR_PS5_IP>
+./build_sdk_example.sh sysmodule_resolve <YOUR_PS5_IP>
+./build_sdk_example.sh sysmodule_batch_info <YOUR_PS5_IP>
+./build_sdk_example.sh audioout_resolve <YOUR_PS5_IP>
+./build_sdk_example.sh audioout_open_probe <YOUR_PS5_IP>
+./build_sdk_example.sh audio_beep <YOUR_PS5_IP>
+./build_sdk_example.sh pad_read_dialog <YOUR_PS5_IP>
+./build_sdk_example.sh input_beep <YOUR_PS5_IP>
+./build_sdk_example.sh pad_fx_probe <YOUR_PS5_IP>
+./build_sdk_example.sh pad_lightbar_probe <YOUR_PS5_IP>
+./build_sdk_example.sh pad_lightbar_live <YOUR_PS5_IP>
+./build_sdk_example.sh pad_rgb_cycle <YOUR_PS5_IP>
+./build_sdk_example.sh pad_party <YOUR_PS5_IP>
+./build_sdk_example.sh pad_trigger_probe <YOUR_PS5_IP>
+./build_sdk_example.sh pad_info_probe <YOUR_PS5_IP>
+./build_sdk_example.sh pad_trigger_matrix <YOUR_PS5_IP>
+./build_sdk_example.sh pad_trigger_tune_probe <YOUR_PS5_IP>
+./build_sdk_example.sh pad_trigger_ext_probe <YOUR_PS5_IP>
+./build_sdk_example.sh user_service_info <YOUR_PS5_IP>
+./build_sdk_example.sh system_params_info <YOUR_PS5_IP>
+./build_sdk_example.sh regmgr_read_info <YOUR_PS5_IP>
+./build_sdk_example.sh gpu_info <YOUR_PS5_IP>
+./build_sdk_example.sh sdk_dashboard <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_host_state <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_gs_probe <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_takeover_probe <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_takeover_reg_probe <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_takeover_flip_probe <YOUR_PS5_IP>
+./build_sdk_example.sh fb_animation <YOUR_PS5_IP>
+./build_sdk_example.sh fb_pad_draw <YOUR_PS5_IP>
+./build_sdk_example.sh fb_text <YOUR_PS5_IP>
+./build_sdk_example.sh arkanoid <YOUR_PS5_IP>
+./build_sdk_example.sh fb_snake <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_info <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_open_probe <YOUR_PS5_IP>
+./build_sdk_example.sh videoout_open_matrix <YOUR_PS5_IP>
+./build_sdk_example.sh hello_square <YOUR_PS5_IP>
+./build_sdk_example.sh hello_square_debug <YOUR_PS5_IP>
+./build_sdk_example.sh net_resolve_info <YOUR_PS5_IP>
+./build_sdk_example.sh socket_open_probe <YOUR_PS5_IP>
+./build_sdk_example.sh net_init_probe <YOUR_PS5_IP>
+./build_sdk_example.sh netctl_state_info <YOUR_PS5_IP>
+./build_sdk_example.sh rtc_resolve_info <YOUR_PS5_IP>
+./build_sdk_example.sh rtc_tick_info <YOUR_PS5_IP>
+./build_sdk_example.sh rtc_clock_local_info <YOUR_PS5_IP>
+./build_sdk_example.sh mount_points_info <YOUR_PS5_IP>
+./build_sdk_example.sh mount_syscalls_info <YOUR_PS5_IP>
+./build_sdk_example.sh mount_probe_info <YOUR_PS5_IP>
+./build_sdk_example.sh fsstat_probe <YOUR_PS5_IP>
+./build_sdk_example.sh statfs_probe <YOUR_PS5_IP>
+./build_sdk_example.sh fs_write_test <YOUR_PS5_IP>
+./build_sdk_example.sh fb_explorer <YOUR_PS5_IP>
+./build_sdk_example.sh fb_3d_cube <YOUR_PS5_IP>
+./build_sdk_example.sh fb_synthwave <YOUR_PS5_IP>
 ```
 
-El launcher puede mostrar `FTP server not responding after 10s`; es normal en estos payloads de ejemplo porque no levantan FTP.
+The launcher may display `FTP server not responding after 10s`; this is normal for these example payloads because they don't host an FTP server.
