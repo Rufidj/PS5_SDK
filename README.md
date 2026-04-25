@@ -13,6 +13,15 @@ https://github.com/user-attachments/assets/d0a36556-1ff1-4cdf-aa42-5b9d8fadbc89
 https://github.com/user-attachments/assets/b2b82ff3-529d-4d83-990e-058984e72da6
 
 
+## Build
+
+```bash
+make -f Makefile.sdk_examples EXAMPLE=hello_dialog
+make -f Makefile.sdk_examples EXAMPLE=formatter_dialog
+make -f Makefile.sdk_examples EXAMPLE=progress_dialog
+```
+
+
 
 
 
