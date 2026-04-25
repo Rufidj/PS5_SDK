@@ -1,7 +1,7 @@
 #ifndef PS5_SDK_PS5_SDK_AUDIO_HELPERS_H
 #define PS5_SDK_PS5_SDK_AUDIO_HELPERS_H
 
-#include "core.h"
+#include "ps5_sdk_types.h"
 
 #define PS5SDK_AUDIO_S16_STEREO 1
 #define PS5SDK_AUDIO_SAMPLE_RATE 48000

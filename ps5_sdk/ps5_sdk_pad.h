@@ -1,7 +1,7 @@
 #ifndef PS5_SDK_PS5_SDK_PAD_H
 #define PS5_SDK_PS5_SDK_PAD_H
 
-#include "core.h"
+#include "ps5_sdk_types.h"
 
 #define PS5SDK_PAD_BTN_OPTIONS  0x00000008u
 #define PS5SDK_PAD_BTN_UP       0x00000010u

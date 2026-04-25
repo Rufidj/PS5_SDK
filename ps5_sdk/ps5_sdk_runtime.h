@@ -5,7 +5,7 @@
 #ifndef PS5_SDK_PS5_SDK_RUNTIME_H
 #define PS5_SDK_PS5_SDK_RUNTIME_H
 
-#include "../core.h"
+#include "ps5_sdk_types.h"
 #include "ps5_sdk_core.h"
 
 static void ps5_sdk_putc(char *out, int *pos, int cap, char c) {
