@@ -20,7 +20,7 @@ all: $(TARGET).bin
 $(OUTDIR):
 	mkdir -p $(OUTDIR)
 
-$(OBJ): $(SRC) examples/ps5_sdk/example_common.h src/core.h src/ps5_sdk.h | $(OUTDIR)
+$(OBJ): $(SRC) examples/ps5_sdk/example_common.h src/ps5_sdk/ps5_sdk_types.h src/ps5_sdk.h | $(OUTDIR)
 	$(CC) $(CFLAGS) -c $(SRC) -o $@
 
 $(TARGET).elf: $(OBJ)
