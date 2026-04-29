@@ -1,19 +1,29 @@
 #!/bin/bash
 set -e
 
-# Configuration
 EXAMPLE="${1:-hello_dialog}"
-PS5_IP="${2:-YOUR_PS5_IP}"
+IP="${2:-192.168.0.147}"
 BIN="build/examples/${EXAMPLE}.bin"
+OUT_DIR="examples/build/${EXAMPLE}"
+LUA_FILE="${OUT_DIR}/${EXAMPLE}.lua"
+LAUNCHER_SRC="dump_min.lua"
 
-echo "[*] Compiling SDK Example: ${EXAMPLE}..."
+# Some examples (like fb_explorer_ftp) require the full launcher context/sockets.
+case "${EXAMPLE}" in
+  fb_explorer_ftp) LAUNCHER_SRC="dump.lua" ;;
+esac
+
+echo "[*] Compilando ejemplo SDK: ${EXAMPLE}"
 make -f Makefile.sdk_examples EXAMPLE="${EXAMPLE}" clean
 make -f Makefile.sdk_examples EXAMPLE="${EXAMPLE}"
 
-echo "[*] Injecting ${BIN} into payload.lua..."
-python3 convert.py "${BIN}" payload.lua
+mkdir -p "${OUT_DIR}"
+cp "${LAUNCHER_SRC}" "${LUA_FILE}"
 
-echo "[*] Sending payload to PS5 at ${PS5_IP}..."
-python3 launcher.py "${PS5_IP}" --skip-upload
+echo "[*] Inyectando ${BIN} en ${LUA_FILE}..."
+python3 convert.py "${BIN}" "${LUA_FILE}"
 
-echo "[+] Done!"
+rm -f "${OUT_DIR}/last_dump.lua"
+
+echo "[*] Lanzando payload hacia ${IP} con ${LUA_FILE}..."
+python3 dump_launcher.py "${IP}" --skip-upload --launcher "${LUA_FILE}"
