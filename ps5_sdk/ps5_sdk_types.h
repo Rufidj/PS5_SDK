@@ -52,6 +52,75 @@ static void *ps5_sdk_resolve_sym(void *gadget, void *dlsym_fn,
     void *addr = 0;
     ps5_sdk_native_call(gadget, dlsym_fn,
                         (u64)handle, (u64)name, (u64)&addr, 0, 0, 0);
+    if (addr) return addr;
+
+    /* Portable fallback:
+     * if static handle lookup failed, map known handles to module paths,
+     * load the module dynamically, and retry dlsym with the runtime handle.
+     */
+    if (!gadget || !dlsym_fn || !name) return 0;
+
+    const char *mod_path = 0;
+    switch (handle) {
+        case 0x2:  mod_path = "libSceLibcInternal.sprx"; break;
+        case 0x11: mod_path = "libSceSysmodule.sprx"; break;
+        case 0x13: mod_path = "libSceFios2.prx"; break;
+        case 0x14: mod_path = "libc.prx"; break;
+        case 0x1e: mod_path = "libSceNet.sprx"; break;
+        case 0x2d: mod_path = "libSceIpmi.sprx"; break;
+        case 0x2e: mod_path = "libSceMbus.sprx"; break;
+        case 0x2f: mod_path = "libSceRegMgr.sprx"; break;
+        case 0x30: mod_path = "libSceRtc.sprx"; break;
+        case 0x31: mod_path = "libSceAvSetting.sprx"; break;
+        case 0x32: mod_path = "libSceVideoOut.sprx"; break;
+        case 0x33: mod_path = "libSceGnmDriver.sprx"; break;
+        case 0x35: mod_path = "libSceAudioOut.sprx"; break;
+        case 0x39: mod_path = "libSceAudioIn.sprx"; break;
+        case 0x3c: mod_path = "libSceAjm.sprx"; break;
+        case 0x3d: mod_path = "libScePad.sprx"; break;
+        case 0x3e: mod_path = "libSceCamera.sprx"; break;
+        case 0x44: mod_path = "libSceNetCtl.sprx"; break;
+        case 0x46: mod_path = "libSceHttp.sprx"; break;
+        case 0x48: mod_path = "libSceSsl.sprx"; break;
+        case 0x4a: mod_path = "libSceNpCommon.sprx"; break;
+        case 0x4b: mod_path = "libSceNpManager.sprx"; break;
+        case 0x77: mod_path = "libSceNpWebApi.sprx"; break;
+        case 0x78: mod_path = "libSceSaveData.sprx"; break;
+        case 0x79: mod_path = "libSceSystemService.sprx"; break;
+        case 0x8a: mod_path = "libSceUserService.sprx"; break;
+        case 0x8b: mod_path = "libSceCommonDialog.sprx"; break;
+        case 0x8d: mod_path = "libSceSysUtil.sprx"; break;
+        case 0x8e: mod_path = "libSceSisrMgr.sprx"; break;
+        case 0x93: mod_path = "libScePngEnc.sprx"; break;
+        case 0x94: mod_path = "libSceAppContent.sprx"; break;
+        case 0x96: mod_path = "libSceNpTrophy.sprx"; break;
+        case 0x9d: mod_path = "libSceGameLiveStreaming.sprx"; break;
+        case 0x9f: mod_path = "libSceRemoteplay.sprx"; break;
+        case 0xa1: mod_path = "libSceScreenShot.sprx"; break;
+        case 0xa2: mod_path = "libSceResourceArbitrator.sprx"; break;
+        case 0xa4: mod_path = "libSceAvcap2.sprx"; break;
+        case 0xa5: mod_path = "libSceVideoRecording.sprx"; break;
+        case 0xaa: mod_path = "libSceSharePlay.sprx"; break;
+        case 0xac: mod_path = "libSceCompanionHttpd.sprx"; break;
+        case 0xb5: mod_path = "libSceMsgDialog.sprx"; break;
+        case 0xb7: mod_path = "libSceSaveDataDialog.sprx"; break;
+        case 0xb9: mod_path = "libScePs2EmuMenuDialog.sprx"; break;
+        default: break;
+    }
+    if (!mod_path) return 0;
+
+    void *load_start = 0;
+    ps5_sdk_native_call(gadget, dlsym_fn,
+                        (u64)0x2001, (u64)"sceKernelLoadStartModule",
+                        (u64)&load_start, 0, 0, 0);
+    if (!load_start) return 0;
+
+    s64 dyn_h = (s64)ps5_sdk_native_call(gadget, load_start,
+                                         (u64)mod_path, 0, 0, 0, 0, 0);
+    if (dyn_h <= 0) return 0;
+
+    ps5_sdk_native_call(gadget, dlsym_fn,
+                        (u64)(s32)dyn_h, (u64)name, (u64)&addr, 0, 0, 0);
     return addr;
 }
 
