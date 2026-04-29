@@ -1,4 +1,4 @@
-# EmuC0re SDK Build & Run Guide
+# SDK Build & Run Guide
 
 This guide explains requirements and exact steps to compile and launch payload examples on PS5.
 
