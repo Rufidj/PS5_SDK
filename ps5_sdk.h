@@ -13,10 +13,15 @@
 #include "ps5_sdk/ps5_sdk_gpu_helpers.h"
 #include "ps5_sdk/ps5_sdk_network_helpers.h"
 #include "ps5_sdk/ps5_sdk_network.h"
+#include "ps5_sdk/ps5_sdk_pak.h"
 #include "ps5_sdk/ps5_sdk_pad.h"
+#include "ps5_sdk/ps5_sdk_sm64_input.h"
 #include "ps5_sdk/ps5_sdk_sysmodule_helpers.h"
 #include "ps5_sdk/ps5_sdk_system.h"
 #include "ps5_sdk/ps5_sdk_kernel.h"
+#include "ps5_sdk/ps5_sdk_bug3.h"
+#include "ps5_sdk/ps5_sdk_proc.h"
+#include "ps5_sdk/ps5_sdk_gadgets.h"
 #include "ps5_sdk/ps5_sdk_fb.h"
 
 #endif
