@@ -14,9 +14,46 @@
 #define PS5SDK_PAD_BTN_CIRCLE   0x00002000u
 #define PS5SDK_PAD_BTN_CROSS    0x00004000u
 #define PS5SDK_PAD_BTN_SQUARE   0x00008000u
+#define PS5SDK_PAD_BTN_L3       0x00000100u
+#define PS5SDK_PAD_BTN_R3       0x00000200u
+#define PS5SDK_PAD_BTN_TOUCHPAD 0x00020000u
+
+#define PS5SDK_PAD_BTN_SHARE_EX 0x00200000u
 
 static u32 ps5_sdk_pad_buttons_from_raw(u32 raw) {
     return raw & 0x001FFFFFu;
+}
+
+static u32 ps5_sdk_pad_buttons_from_packet(const u8 *pad_buf) {
+    u32 btns = 0;
+    u8 b0, b1, b2;
+    if (!pad_buf) return 0;
+
+    btns = ps5_sdk_pad_buttons_from_raw(*(const u32 *)pad_buf);
+    if (btns) return btns;
+
+    b0 = pad_buf[8];
+    b1 = pad_buf[9];
+    b2 = pad_buf[10];
+
+    if (b0 & 0x01u) btns |= PS5SDK_PAD_BTN_UP;
+    if (b0 & 0x02u) btns |= PS5SDK_PAD_BTN_RIGHT;
+    if (b0 & 0x04u) btns |= PS5SDK_PAD_BTN_DOWN;
+    if (b0 & 0x08u) btns |= PS5SDK_PAD_BTN_LEFT;
+
+    if (b0 & 0x10u) btns |= PS5SDK_PAD_BTN_SQUARE;
+    if (b0 & 0x20u) btns |= PS5SDK_PAD_BTN_CROSS;
+    if (b0 & 0x40u) btns |= PS5SDK_PAD_BTN_CIRCLE;
+    if (b0 & 0x80u) btns |= PS5SDK_PAD_BTN_TRIANGLE;
+
+    if (b1 & 0x01u) btns |= PS5SDK_PAD_BTN_L1;
+    if (b1 & 0x02u) btns |= PS5SDK_PAD_BTN_R1;
+    if (b1 & 0x10u) btns |= PS5SDK_PAD_BTN_SHARE_EX;
+    if (b1 & 0x20u) btns |= PS5SDK_PAD_BTN_OPTIONS;
+    if (b1 & 0x40u) btns |= PS5SDK_PAD_BTN_L3;
+    if (b1 & 0x80u) btns |= PS5SDK_PAD_BTN_R3;
+    if (b2 & 0x02u) btns |= PS5SDK_PAD_BTN_TOUCHPAD;
+    return btns;
 }
 
 static u32 ps5_sdk_pad_first_button(u32 b) {
@@ -86,7 +123,7 @@ static s32 ps5_sdk_pad_read_buttons(void *G, void *pad_read, s32 pad_h, u8 *pad_
     for (int i = 0; i < 128; i++) pad_buf[i] = 0;
     s32 ret = (s32)NC(G, pad_read, (u64)pad_h, (u64)pad_buf, 1, 0, 0, 0);
     *raw_out = *(u32 *)pad_buf;
-    *buttons_out = ps5_sdk_pad_buttons_from_raw(*raw_out);
+    *buttons_out = ps5_sdk_pad_buttons_from_packet(pad_buf);
     return ret;
 }
 
