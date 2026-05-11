@@ -1,6 +1,6 @@
 # PS5_SDK
 
-A lightweight, standalone C SDK for PS5 firmware 13.00. Focuses on live RAM `EH_offset` alignment, module handles, and direct system interaction without standard libc dependencies.
+A lightweight, standalone C SDK for PS5, featuring multi-firmware compatibility with a focus on dynamic RAM EH_offset alignment. It supports automated module handle resolution and direct system interaction without standard libc dependencies, battle-tested on firmwares 13.00 and 13.20.
 
 ![breakout](https://github.com/user-attachments/assets/fa37f637-d62b-415a-94d2-925a3a991d82)
 
