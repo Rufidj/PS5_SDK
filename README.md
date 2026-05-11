@@ -1,4 +1,4 @@
-# PS5_SDK
+# PS5_DEV_HOMEBREW
 
 A lightweight, standalone C SDK for PS5, featuring multi-firmware compatibility with a focus on dynamic RAM EH_offset alignment. It supports automated module handle resolution and direct system interaction without standard libc dependencies, battle-tested on firmwares 13.00 and 13.20.
 
