@@ -14,9 +14,9 @@ https://github.com/user-attachments/assets/dc456673-fcae-43e6-b2ef-631752ebc78f
 
 ## Key Features
 
-- **Firmware 13.00 Ready:** Tailored for the latest public offsets and kernel structures.
+- **Universal Firmware Compatibility:** Architected to be compatible with all firmware versions by using dynamic offset resolution.
+- **Battle-Tested:** While theoretically universal, the SDK has been thoroughly tested and verified on Firmwares 13.00 and 13.20.
 - **Bare Metal Approach:** No standard libc dependencies for smaller, more efficient, and stealthier payloads.
-- **GPU Access:** Native rendering examples included, featuring a functional Breakout (Arkanoid) clone PoC.
 - **System Interaction:** Direct handling of system dialogs (notification, progress, formatter), kernel info retrieval, and sysmodule resolving.
 
 ## Build
